@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGNAL TRACE // TARGET_9309090796</title>
+    <style>
+        :root {
+            --glow-green: #00ff66;
+            --terminal-blue: #00ccff;
+            --dark-bg: #05080c;
+            --panel-bg: rgba(10, 18, 30, 0.75);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--glow-green);
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Scanline Overlay for Realistic CRT Effect */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 99;
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+        }
+
+        /* Ambient Glow */
+        .hud-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            grid-template-rows: 60px 1fr 200px;
+            height: 100vh;
+            padding: 15px;
+            gap: 15px;
+        }
+
+        header {
+            grid-column: span 2;
+            background: var(--panel-bg);
+            border: 1px solid var(--terminal-blue);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 0 15px rgba(0, 204, 255, 0.15);
+        }
+
+        .status-blink {
+            animation: blink 1s steps(2, start) infinite;
+            color: #ff3333;
+            font-weight: bold;
+        }
+
+        /* Tactical Grid Display */
+        .main-display {
+            background: var(--panel-bg);
+            border: 1px solid var(--glow-green);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.1);
+        }
+
+        .grid-overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 102, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 102, 0.08) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: center;
+        }
+
+        .radar-sweep {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(0, 255, 102, 0.15) 0%, transparent 100%);
+            top: -100%;
+            animation: sweep 4s linear infinite;
+        }
+
+        .target-reticle {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border: 2px dashed #ff3333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .target-reticle::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ff3333;
+        }
+
+        /* Sidebar Metadata */
+        .sidebar {
+            background: var(--panel-bg);
+            border: 1px solid var(--terminal-blue);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .data-block {
+            border-left: 3px solid var(--terminal-blue);
+            padding-left: 10px;
+        }
+
+        .data-val {
+            color: #ffffff;
+            font-size: 1.1rem;
+            margin-top: 5px;
+        }
+
+        /* Console Log Output */
+        .console-log {
+            grid-column: span 2;
+            background: rgba(5, 10, 15, 0.9);
+            border: 1px solid var(--glow-green);
+            padding: 15px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+        }
+        .log-entry.info { color: var(--terminal-blue); }
+        .log-entry.warn { color: #ffaa00; }
+        .log-entry.success { color: var(--glow-green); font-weight: bold; }
+
+        @keyframes blink { to { opacity: 0; } }
+        @keyframes sweep {
+            0% { top: -100%; }
+            100% { top: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hud-container">
+        <!-- Header -->
+        <header>
+            <h2>CELLULAR_TRACE_OSINT // PROTOCOL v4.8</h2>
+            <div>TARGET REGISTERED: <span style="color: #fff;">+91 9309090796</span></div>
+            <div class="status-blink">● SYSTEM_ENGAGED</div>
+        </header>
+
+        <!-- Main Targeting Map Grid -->
+        <div class="main-display">
+            <div class="grid-overlay"></div>
+            <div class="radar-sweep"></div>
+            
+            <!-- Target Coordinates Callout Layer -->
+            <div id="reticle" class="target-reticle">
+                <div style="position: absolute; top: -25px; color: #ff3333; font-weight: bold; font-size: 0.8rem; white-space: nowrap;">
+                    LOCK: TARGET_9309090796
+                </div>
+            </div>
+
+            <div id="coordinate-readout" style="font-size: 2rem; font-weight: bold; z-index: 10; background: rgba(5,8,12,0.8); padding: 10px 20px; border: 1px solid var(--glow-green);">
+                SEARCHING...
+            </div>
+        </div>
+
+        <!-- Sidebar telemetry -->
+        <div class="sidebar">
+            <div class="data-block">
+                <div>MSISDN TARGET</div>
+                <div class="data-val">9309090796</div>
+            </div>
+            <div class="data-block">
+                <div>COUNTRY ORIGIN</div>
+                <div class="data-val">INDIA (MH-REGION)</div>
+            </div>
+            <div class="data-block">
+                <div>SIGNAL TRIANGULATION</div>
+                <div id="triangulation-val" class="data-val">CALCULATING...</div>
+            </div>
+            <div class="data-block">
+                <div>ESTIMATED LAT / LONG</div>
+                <div id="lat-long-val" class="data-val" style="color: #ff3333;">PENDING LOCK</div>
+            </div>
+        </div>
+
+        <!-- Terminal Output System -->
+        <div id="console" class="console-log"></div>
+    </div>
+
+    <script>
+        const targetNumber = "9309090796";
+        const consoleEl = document.getElementById('console');
+        const readoutEl = document.getElementById('coordinate-readout');
+        const reticleEl = document.getElementById('reticle');
+        const triangulationVal = document.getElementById('triangulation-val');
+        const latLongVal = document.getElementById('lat-long-val');
+
+        // Authentic tracking logs
+        const logs = [
+            { text: `[INIT] Initializing global cell tower intercept sequence for node: ${targetNumber}...`, type: 'info', delay: 400 },
+            { text: "[INFO] Pinging HLR (Home Location Register) databases...", type: 'info', delay: 900 },
+            { text: "[SUCCESS] Route found via Maharashtra Telecom Infrastructure Node Hub.", type: 'success', delay: 1400 },
+            { text: "[WARN] Intercepting encrypted signaling packets (SS7 Protocol)... Decoding...", type: 'warn', delay: 2000 },
+            { text: "[INFO] Triangulating approximate coordinates using neighbor cells tower ID telemetry...", type: 'info', delay: 2800 },
+            { text: "[CONNECT] Primary link established. Cell site sector: B-402.", type: 'success', delay: 3500 },
+            { text: "[LOCK] Signal strength stable. Refining geolocation matrix algorithms...", type: 'info', delay: 4200 },
+            { text: "[SUCCESS] TARGET INTERCEPT COMPLETE. COORD DATA EXTRACTED SUCCESSFULLY.", type: 'success', delay: 5000 }
+        ];
+
+        // Realistic random coordinates near realistic coordinates matching the state context
+        const finalLat = 19.1428;
+        const finalLong = 77.3012;
+
+        // Populate terminal logs dynamically
+        logs.forEach(log => {
+            setTimeout(() => {
+                const entry = document.createElement('div');
+                entry.className = `log-entry ${log.type}`;
+                entry.innerText = log.text;
+                consoleEl.appendChild(entry);
+                consoleEl.scrollTop = consoleEl.scrollHeight;
+            }, log.delay);
+        });
+
+        // Fast counter updating animation to look like it's calculating values live
+        let duration = 5000; 
+        let startTime = Date.now();
+
+        function updateCoordinates() {
+            let elapsed = Date.now() - startTime;
+            let progress = Math.min(elapsed / duration, 1);
+
+            if (progress < 1) {
+                // Generate fast scrolling noise
+                let mockLat = (Math.random() * 90).toFixed(6);
+                let mockLong = (Math.random() * 180).toFixed(6);
+                readoutEl.innerText = `${mockLat}° N / ${mockLong}° E`;
+                triangulationVal.innerText = `误差范围: ${(1000 * (1 - progress)).toFixed(2)}m`;
+                
+                // Keep moving reticle randomly while searching
+                reticleEl.style.opacity = "0.3";
+                reticleEl.style.transform = `translate(${(Math.random() * 60) - 30}px, ${(Math.random() * 60) - 30}px)`;
+
+                requestAnimationFrame(updateCoordinates);
+            } else {
+                // Lock exact final target coordinates
+                let formattedCoord = `${finalLat.toFixed(4)}° N, ${finalLong.toFixed(4)}° E`;
+                readoutEl.innerText = formattedCoord;
+                readoutEl.style.color = '#ff3333';
+                readoutEl.style.borderColor = '#ff3333';
+                
+                triangulationVal.innerText = "ACCURACY LOCK: ±4.2m";
+                triangulationVal.style.color = "#00ff66";
+                
+                latLongVal.innerText = `${finalLat.toFixed(4)}, ${finalLong.toFixed(4)}`;
+                
+                // Center and focus reticle lock position
+                reticleEl.style.opacity = "1";
+                reticleEl.style.transform = "translate(0, 0) scale(1.1)";
+                reticleEl.style.animation = "blink 0.5s step-end infinite alternate";
+            }
+        }
+
+        // Start scanning cycle
+        requestAnimationFrame(updateCoordinates);
+    </script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #e0f7fa, #e1bee7);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    padding: 40px 20px;
+}
+
+h1,
+h2 {
+    margin-bottom: 30px;
+    color: #222;
+    font-weight: 600;
+}
+
+.container-wrapper {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    max-width: 1000px;
+}
+
+.container {
+    width: 230px;
+    height: 180px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    padding: 30px 20px;
+    text-decoration: none;
+    color: #333;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.container:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.container i {
+    font-size: 36px;
+    margin-bottom: 15px;
+    color: #4a148c;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 20px auto;
+    max-width: 400px;
+    text-align: left;
+}
+
+li {
+    margin: 12px 0;
+    font-size: 18px;
+}
+
+li a {
+    text-decoration: none;
+    color: #0077cc;
+    transition: color 0.2s ease;
+}
+
+li a:hover {
+    color: #4a148c;
+    text-decoration: underline;
+}
+
+a.back-link {
+    display: inline-block;
+    margin-top: 30px;
+    font-size: 16px;
+    color: #333;
+}
+
+a.back-link:hover {
+    color: #4a148c;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container-wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+}
